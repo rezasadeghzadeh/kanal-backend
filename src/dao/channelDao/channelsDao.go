@@ -1,10 +1,11 @@
-package dao
+package channelDao
 
 import (
 	"gopkg.in/mgo.v2"
 	"time"
 	"gopkg.in/mgo.v2/bson"
 	"log"
+	"../../dao"
 )
 
 type Channel struct {
@@ -41,7 +42,7 @@ func AlreadyExistsChannelName(channelName string) int{
 }
 
 func getCollection() (*mgo.Collection)  {
-	return session.DB(DATABASE_NAME).C(CHANNELS)
+	return dao.Session.DB(dao.DATABASE_NAME).C(CHANNELS)
 }
 
 func Insert(channel Channel) (error)  {

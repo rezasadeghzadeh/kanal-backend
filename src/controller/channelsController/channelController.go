@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"../dao"
+	"../../dao/channelDao"
 	"encoding/json"
 	"log"
 )
 
 func GetAllChannels() ([]byte){
-	content,error :=json.MarshalIndent(dao.GetList(),"","    ")
+	content,error :=json.MarshalIndent(channelDao.GetList(),"","    ")
 	if(error != nil){
 		log.Printf("%v",error)
 	}
@@ -15,11 +15,11 @@ func GetAllChannels() ([]byte){
 }
 
 func AlreadyExistsChannelName(channelName string) int  {
-	return dao.AlreadyExistsChannelName(channelName);
+	return channelDao.AlreadyExistsChannelName(channelName);
 }
 
 func SaveNewChannel(channelName string, channelTitle string, channelDesc string, channelType string) (int) {
-	return dao.SaveNewChannel(channelName, channelTitle, channelDesc, channelType)
+	return channelDao.SaveNewChannel(channelName, channelTitle, channelDesc, channelType)
 }
 
 

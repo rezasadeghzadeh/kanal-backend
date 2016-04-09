@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"encoding/json"
 	"../dao/channelDao"
-	"../dao/smsVerificationDao"
 	"../controller/userController"
 )
 
@@ -26,14 +25,9 @@ type response struct {
 
 func smsVerificationBinding()  {
 	sendSmsVerificationHandler := func(w http.ResponseWriter, r *http.Request) {
-		decoder := json.NewDecoder(r.Body)
-		var smsVerification smsVerificationDao.SmsVerification
-		err := decoder.Decode(&smsVerification)
-		if(err != nil){
-			log.Printf("%v",err)
-		}
-		log.Printf(smsVerification.MobileNumber)
-		b := []byte(strconv.Itoa(smsVerificationController.SendSmsVerification(smsVerification.MobileNumber)))
+		mobileNumber := r.URL.Query().Get("mobileNumber")
+		log.Printf("Mobilenumber : %s",mobileNumber)
+		b,_ := json.Marshal(strconv.Itoa(smsVerificationController.SendSmsVerification(mobileNumber)))
 		writeJsonToResponse(&w,b)
 	}
 	http.Handle("/smsVerification/send",http.HandlerFunc(sendSmsVerificationHandler))
@@ -91,5 +85,9 @@ func channelsBinding()  {
 }
 func writeJsonToResponse(w *http.ResponseWriter,b []byte){
 	(*w).Header().Set("Content-Type","application/json")
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Auth-Token")
 	(*w).Write(b)
 }

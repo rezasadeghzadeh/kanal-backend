@@ -15,13 +15,10 @@ type Channel struct {
 	ChannelType string
 	OwnerId string
 	RegisterTimestamp time.Time
-	Images channelImage
+	ImageUrl string
+	ThumbnailUrl string
 }
 
-type channelImage struct  {
-	OriginalPath string
-	ThumbnailPath string
-}
 const CHANNELS  = "channels"
 
 func GetList() ([]Channel)  {
@@ -56,15 +53,11 @@ func InsertSample(title string) {
 		Title: title,
 		ChannelType:"1",
 		Description:"Desc " + title,
-		Images: channelImage{
-			OriginalPath:"http://www.yarancenter.com/sites/default/files/gallery/smod/DSC02797_0.JPG",
-			ThumbnailPath:"http://www.yarancenter.com/sites/default/files/gallery/smod/DSC02797_0.JPG",
-		},
 	}
 	Insert(channel1)
 }
 
-func SaveNewChannel(channelName string, channelTitle string, channelDesc string, channelType string) (int){
+func SaveNewChannel(channelName string, channelTitle string, channelDesc string, channelType string, channelImageUrl string) (int){
 	if channelName  == "" || channelTitle == "" {
 		return 0;
 	}
@@ -74,10 +67,8 @@ func SaveNewChannel(channelName string, channelTitle string, channelDesc string,
 		Title: channelTitle,
 		ChannelType:channelType,
 		Description:channelDesc,
-		Images :channelImage{
-			OriginalPath:"http://www.yarancenter.com/sites/default/files/gallery/smod/DSC02797_0.JPG",
-			ThumbnailPath:"http://www.yarancenter.com/sites/default/files/gallery/smod/DSC02797_0.JPG",
-		},
+		ImageUrl:channelImageUrl,
+		ThumbnailUrl : channelImageUrl,
 	}
 	err := Insert(newChannel)
 	if(err != nil){

@@ -18,8 +18,8 @@ func AlreadyExistsChannelName(channelName string) int  {
 	return channelDao.AlreadyExistsChannelName(channelName);
 }
 
-func SaveNewChannel(channelName string, channelTitle string, channelDesc string, channelType string) (int) {
-	return channelDao.SaveNewChannel(channelName, channelTitle, channelDesc, channelType)
+func SaveNewChannel(channelName string, channelTitle string, channelDesc string, channelType string,channelImageUrl string) (int) {
+	return channelDao.SaveNewChannel(channelName, channelTitle, channelDesc, channelType,channelImageUrl)
 }
 
 

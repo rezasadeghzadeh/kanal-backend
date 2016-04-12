@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"../dao/channelDao"
 	"../controller/userController"
+	"../controller/uploadController"
 )
 
 func InitHttpHandlers() {
@@ -16,11 +17,31 @@ func InitHttpHandlers() {
 	channelsBinding()
 	userBinding()
 	smsVerificationBinding()
+	fileUploadBinding()
+	serveImagesBinding()
+	
 }
+
+
 
 type response struct {
 	status string
 	data string
+}
+
+func serveImagesBinding()  {
+	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Serving file %s",r.URL.Path[1:])
+		http.ServeFile(w, r, r.URL.Path[1:])
+	})
+}
+func fileUploadBinding() {
+	fileUploadHandler  := func(w http.ResponseWriter,r *http.Request){
+		res,_ := uploadController.HandleUpload(r)
+		json,_ := json.Marshal(res)
+		w.Write(json)
+	}
+	http.Handle("/file/upload",http.HandlerFunc(fileUploadHandler))
 }
 
 func smsVerificationBinding()  {
@@ -77,7 +98,7 @@ func channelsBinding()  {
 		if(err != nil){
 			log.Printf("%v",err)
 		}
-		b := controller.SaveNewChannel(channel.Name,channel.Title,channel.Description,channel.ChannelType)
+		b := controller.SaveNewChannel(channel.Name,channel.Title,channel.Description,channel.ChannelType,channel.ImageUrl)
 		byteValue := []byte(strconv.Itoa(b))
 		writeJsonToResponse(&w,byteValue)
 	}

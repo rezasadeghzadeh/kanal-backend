@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"encoding/base64"
-	"io"
-	"crypto/rand"
 
+
+	"strings"
+	"log"
 )
 func main1()  {
-	token := make([]byte, 128)
-	_, err := io.ReadFull(rand.Reader, token);
-	if  err != nil {
-	}
-	s:= base64.URLEncoding.EncodeToString(token)
-	fmt.Printf("%s",s)
+	fileName :=  "image.jpg"
+	dotPosition := strings.LastIndex(fileName,".")
+	log.Printf("%d",dotPosition)
+	ext := fileName[dotPosition:len(fileName)]
+
+	log.Printf("FileName: %s  Ext: %s",fileName,ext)
 }

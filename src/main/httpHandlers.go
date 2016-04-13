@@ -19,7 +19,6 @@ func InitHttpHandlers() {
 	smsVerificationBinding()
 	fileUploadBinding()
 	serveImagesBinding()
-	
 }
 
 

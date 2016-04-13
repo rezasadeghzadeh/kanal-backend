@@ -10,6 +10,8 @@ import (
 	"../dao/channelDao"
 	"../controller/userController"
 	"../controller/uploadController"
+	"../utils"
+	"../dao/userDao"
 )
 
 func InitHttpHandlers() {
@@ -92,13 +94,17 @@ func channelsBinding()  {
 	http.Handle("/channels/alreadyExistsChannelName",http.HandlerFunc(alreadyExistsChannelNameHandler))
 
 	saveNewChannel := func(w http.ResponseWriter, r *http.Request) {
+		token := utils.GetUserTokenFromReq(r)
+		userId := userDao.GetUserIdByToken(token)
+		log.Printf("User Token: %s UserId:%s",token,userId)
+
 		decoder := json.NewDecoder(r.Body)
 		var channel channelDao.Channel
 		err := decoder.Decode(&channel)
 		if(err != nil){
 			log.Printf("%v",err)
 		}
-		b := controller.SaveNewChannel(channel.Name,channel.Title,channel.Description,channel.ChannelType,channel.ImageUrl)
+		b := controller.SaveNewChannel(channel.Name,channel.Title,channel.Description,channel.ChannelType,channel.ImageUrl,userId)
 		byteValue := []byte(strconv.Itoa(b))
 		writeJsonToResponse(&w,byteValue)
 	}

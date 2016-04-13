@@ -57,8 +57,8 @@ func InsertSample(title string) {
 	Insert(channel1)
 }
 
-func SaveNewChannel(channelName string, channelTitle string, channelDesc string, channelType string, channelImageUrl string) (int){
-	if channelName  == "" || channelTitle == "" {
+func SaveNewChannel(channelName string, channelTitle string, channelDesc string, channelType string, channelImageUrl string,userId string) (int){
+	if channelName  == "" || channelTitle == "" || userId  == ""{
 		return 0;
 	}
 
@@ -69,6 +69,7 @@ func SaveNewChannel(channelName string, channelTitle string, channelDesc string,
 		Description:channelDesc,
 		ImageUrl:channelImageUrl,
 		ThumbnailUrl : channelImageUrl,
+		OwnerId:userId,
 	}
 	err := Insert(newChannel)
 	if(err != nil){

@@ -43,5 +43,7 @@ func GetFileExtention(fileName string) (string){
 }
 
 func GetUserTokenFromReq(r *http.Request) (string){
-	return r.Header.Get("X-Auth-Token")
+	token := r.Header.Get("X-Auth-Token")
+	log.Printf("Request sent with Token : %s \n",token)
+	return token
 }

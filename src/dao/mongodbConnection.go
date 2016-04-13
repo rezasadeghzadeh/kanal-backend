@@ -2,14 +2,25 @@ package dao
 
 import (
 	"gopkg.in/mgo.v2"
+    "flag"
+    "fmt"
 )
 var Session *mgo.Session
 var err error
 
-const  DATABASE_NAME ="kanal"
+var  DATABASE_NAME = ""
 
 func init()  {
-	Session, err = mgo.Dial("localhost")
+    f := flag.String("config", "config.json", "config file")
+    flag.Parse()
+    c, err := NewConfigFile(*f)
+    if err != nil {
+        fmt.Println("failed to config file, started with default values:", err)
+    }
+
+    DATABASE_NAME = c.DatabaseName
+
+	Session, err = mgo.Dial(c.DatabaseServer)
 	if err != nil{
 		panic(err)
 	}

@@ -47,3 +47,12 @@ func GetUserTokenFromReq(r *http.Request) (string){
 	log.Printf("Request sent with Token : %s \n",token)
 	return token
 }
+
+func WriteJsonToResponse(w *http.ResponseWriter,b []byte){
+	(*w).Header().Set("Content-Type","application/json")
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Auth-Token")
+	(*w).Write(b)
+}

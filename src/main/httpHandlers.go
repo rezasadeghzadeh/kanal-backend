@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"../controller/channelsController"
+	"../controller/channelPostController"
 	"../controller/smsVerificationController"
 	"strconv"
 	"encoding/json"
@@ -17,6 +18,7 @@ import (
 func InitHttpHandlers() {
 	log.Printf("Start Http Initalization\n")
 	channelsBinding()
+	channelPostBinding()
 	userBinding()
 	smsVerificationBinding()
 	fileUploadBinding()
@@ -30,6 +32,10 @@ type response struct {
 	data string
 }
 
+func channelPostBinding()  {
+	http.Handle("/channelPosts/postTextMessage",http.HandlerFunc(channelPostController.SaveTextPost ))
+	http.Handle("/channelPosts",http.HandlerFunc(channelPostController.GetTextPostsByChannelId ))
+}
 func serveImagesBinding()  {
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Serving file %s",r.URL.Path[1:])
@@ -50,7 +56,7 @@ func smsVerificationBinding()  {
 		mobileNumber := r.URL.Query().Get("mobileNumber")
 		log.Printf("Mobilenumber : %s",mobileNumber)
 		b,_ := json.Marshal(strconv.Itoa(smsVerificationController.SendSmsVerification(mobileNumber)))
-		writeJsonToResponse(&w,b)
+		utils.WriteJsonToResponse(&w,b)
 	}
 	http.Handle("/smsVerification/send",http.HandlerFunc(sendSmsVerificationHandler))
 
@@ -58,7 +64,7 @@ func smsVerificationBinding()  {
 		mobileNumber := r.URL.Query().Get("mobileNumber")
 		enteredText  := r.URL.Query().Get("enteredText")
 		b := []byte(strconv.Itoa(smsVerificationController.VerifySentSms(mobileNumber,enteredText)))
-		writeJsonToResponse(&w,b)
+		utils.WriteJsonToResponse(&w,b)
 	}
 	http.Handle("/smsVerification/verify",http.HandlerFunc(verifySentSmsHandler))
 }
@@ -71,7 +77,7 @@ func userBinding()  {
 		firstName := r.URL.Query().Get("firstName")
 		lastName := r.URL.Query().Get("lastName")
 		b,_ := json.Marshal(userController.UpsertAndGetToken(mobileNumber,email,firstName,lastName))
-		writeJsonToResponse(&w,b)
+		utils.WriteJsonToResponse(&w,b)
 	}
 	http.Handle("/user/updateAndGetToken",http.HandlerFunc(userUpdateHandler))
 
@@ -80,7 +86,7 @@ func channelsBinding()  {
 	//channels list handler
 	channelsListHandler := func(w http.ResponseWriter, r *http.Request) {
 		b := controller.GetAllChannels()
-		writeJsonToResponse(&w,b)
+		utils.WriteJsonToResponse(&w,b)
 	}
 	http.Handle("/channels/list",http.HandlerFunc(channelsListHandler))
 
@@ -88,7 +94,7 @@ func channelsBinding()  {
 		channelName  := r.URL.Query().Get("name");
 		b := controller.AlreadyExistsChannelName(channelName)
 		byteValue := []byte(strconv.Itoa(b))
-		writeJsonToResponse(&w,byteValue)
+		utils.WriteJsonToResponse(&w,byteValue)
 	}
 	http.Handle("/channels/alreadyExistsChannelName",http.HandlerFunc(alreadyExistsChannelNameHandler))
 
@@ -105,15 +111,8 @@ func channelsBinding()  {
 		}
 		b := controller.SaveNewChannel(channel.Name,channel.Title,channel.Description,channel.ChannelType,channel.ImageUrl,userId)
 		byteValue := []byte(strconv.Itoa(b))
-		writeJsonToResponse(&w,byteValue)
+		utils.WriteJsonToResponse(&w,byteValue)
 	}
 	http.Handle("/channels/saveNewChannel",http.HandlerFunc(saveNewChannel))
 }
-func writeJsonToResponse(w *http.ResponseWriter,b []byte){
-	(*w).Header().Set("Content-Type","application/json")
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	(*w).Header().Set("Access-Control-Allow-Headers",
-		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Auth-Token")
-	(*w).Write(b)
-}
+

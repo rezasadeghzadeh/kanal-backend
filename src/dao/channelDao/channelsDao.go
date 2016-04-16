@@ -9,6 +9,7 @@ import (
 )
 
 type Channel struct {
+	Id bson.ObjectId `bson:"_id,omitempty"`
 	Name string
 	Title string
 	Description string
